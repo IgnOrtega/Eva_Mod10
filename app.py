@@ -1,49 +1,61 @@
 # app.py
+import logging
 from flask import Flask, request, jsonify
 import joblib
 import numpy as np
 
-dir="./serializar_modelo"
 # ==========================================
 # 1. Inicializar Flask
 # ==========================================
 app = Flask(__name__)
 
+
+# Configurar logging
+logging.basicConfig(
+    filename='api.log',          # archivo donde se guardarán los logs
+    level=logging.INFO,          # nivel de mensajes que se registran
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
 # ==========================================
 # 2. Cargar modelo serializado
 # ==========================================
-modelo = joblib.load(dir+"/"+"Modelo_Breast_Cancer.pkl")
+modelo = joblib.load("./serializar_modelo/Modelo_Breast_Cancer.pkl")
 
-# El dataset Iris tiene 30 features + 1 target
+# Número de features esperadas
 N_FEATURES = 30
 
 # ==========================================
-# 3. Ruta principal
+# 3. Ruta GET para verificar estado
 # ==========================================
 @app.route("/", methods=["GET"])
 def home():
+    logging.info("Se accedió a la ruta /")  # registrar un mensaje de info
     return jsonify({"mensaje": "✅ API lista"})
 
 # ==========================================
-# 4. Endpoint de predicción
+# 4. Ruta POST para predicción
 # ==========================================
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        # Leer JSON
         data = request.get_json()
 
         # Validar que tenga la clave "features"
         if "features" not in data:
+            logging.warning("Falta la clave 'features'")  # warning
             return jsonify({"error": "Falta la clave 'features' en el JSON"}), 400
 
         features = data["features"]
+        logging.info(f"Se recibieron features: {features}")  # info
 
-        # Validar que sea lista numérica
+        # Validar que sea lista de números
         if not isinstance(features, list):
             return jsonify({"error": "'features' debe ser una lista"}), 400
+        logging.error(f"Validacion de lista de números completa") 
 
         if len(features) != N_FEATURES:
+            logging.error(f"Cantidad de features distinta a la esperada")
             return jsonify({
                 "error": f"Se esperaban {N_FEATURES} valores, pero se recibieron {len(features)}"
             }), 400
@@ -59,19 +71,16 @@ def predict():
         # Realizar predicción
         prediction = modelo.predict(features_array)
 
-        return jsonify({
-            "prediction": int(prediction[0])
-        })
+        return jsonify({"prediction": int(prediction[0])})
 
     except Exception as e:
         return jsonify({"error": f"Error interno: {str(e)}"}), 500
-
 
 # ==========================================
 # 5. Ejecutar servidor
 # ==========================================
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5248)
 
 
 """
