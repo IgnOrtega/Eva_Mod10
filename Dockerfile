@@ -15,7 +15,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Exponer puerto
-EXPOSE 6874
+EXPOSE 6875
 
 # Ejecutar app
 CMD ["python", "app.py"]

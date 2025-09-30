@@ -80,7 +80,7 @@ def predict():
 # 5. Ejecutar servidor
 # ==========================================
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=6874)
+    app.run(debug=True, host='0.0.0.0', port=6875)
 
 
 """
