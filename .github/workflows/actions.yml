@@ -6,7 +6,7 @@ on:
       - master   # o main, según tu repo
 
 env:
-  IMAGE_NAME: eva_mod10
+  IMAGE_NAME: eva_mod10 # dsad
 
 jobs:
   build-and-push:
