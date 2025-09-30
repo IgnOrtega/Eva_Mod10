@@ -22,8 +22,8 @@ jobs:
       - name: Log in to Docker Hub (debug, sin secrets)
         uses: docker/login-action@v3
         with:
-          username: ignacio763   # <-- reemplaza por tu usuario real
-          password: dckr_pat_kdlUmktuSrUY36EqLHaCtBxhTZA  # <-- pega tu token directamente
+          username: ${{ secrets.DOCKERHUB_USERNAME }}   # <-- reemplaza por tu usuario real
+          password: ${{ secrets.DOCKERHUB_TOKEN }}  # <-- pega tu token directamente
 
       - name: Extract version from git
         id: vars
@@ -39,5 +39,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ignacio763/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
-            ignacio763/${{ env.IMAGE_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
